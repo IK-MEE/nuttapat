@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>Gemma Chat</title>
+  <style>
+    body { font-family: sans-serif; margin: 20px; }
+    #chatbox { border: 1px solid #ccc; padding: 10px; height: 400px; overflow-y: scroll; }
+    .user { color: blue; }
+    .bot { color: green; }
+    input, button { margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <h2>คุยกับ Gemma</h2>
+  <div id="chatbox"></div>
+  <input id="input" type="text" placeholder="พิมพ์ข้อความ..." />
+  <button onclick="send()">ส่ง</button>
+
+  <script>
+    const chatbox = document.getElementById('chatbox');
+    const input = document.getElementById('input');
+    const webhookUrl = 'http://localhost:5678/webhook-test/chat'; // แก้ตรงนี้ให้ตรงกับ n8n webhook
+
+    function appendMessage(text, sender) {
+      const msg = document.createElement('div');
+      msg.className = sender;
+      msg.textContent = (sender === 'user' ? 'คุณ: ' : 'Gemma: ') + text;
+      chatbox.appendChild(msg);
+      chatbox.scrollTop = chatbox.scrollHeight;
+    }
+
+    async function send() {
+      const text = input.value.trim();
+      if (!text) return;
+      appendMessage(text, 'user');
+      input.value = '';
+      const res = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: text })
+      });
+      const resText  = await res.json();
+      //appendMessage(data.response, 'bot');
+      console.log('🧾 Raw response:', resText)
+      try {
+        const data = JSON.parse(resText);
+        appendMessage(data.response || "ไม่มี response", 'bot');
+      } catch (e) {
+        appendMessage("❌ JSON error: " + resText, 'bot');
+      }
+    }
+  </script>
+</body>
+</html>
