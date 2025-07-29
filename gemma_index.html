@@ -20,7 +20,17 @@
   <script>
     const chatbox = document.getElementById('chatbox');
     const input = document.getElementById('input');
-    const webhookUrl = 'http://localhost:5678/webhook-test/chat'; // แก้ตรงนี้ให้ตรงกับ n8n webhook
+    const webhookUrl = 'https://ef76512beb92.ngrok-free.app/webhook/chat'; // แก้ตรงนี้ให้ตรงกับ n8n webhook
+
+    function getSessionId() {
+      let sessionId = localStorage.getItem('chatSessionId');
+      if (!sessionId) {
+          // สร้าง ID ที่ไม่ซ้ำกัน (UUID)
+          sessionId = 'session_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+          localStorage.setItem('chatSessionId', sessionId);
+      }
+      return sessionId;
+    }
 
     function appendMessage(text, sender) {
       const msg = document.createElement('div');
@@ -31,23 +41,30 @@
     }
 
     async function send() {
+      const sessionId = getSessionId();
       const text = input.value.trim();
+      
       if (!text) return;
       appendMessage(text, 'user');
       input.value = '';
       const res = await fetch(webhookUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: text })
+        body: JSON.stringify({ 
+          prompt: text,
+          sessionId: sessionId })
+        
       });
       const resText  = await res.json();
       //appendMessage(data.response, 'bot');
-      console.log('🧾 Raw response:', resText)
+      console.log('🧾 Raw response:', resText);
+      //const data = JSON.parse(resText);
+      console.log('🧾 Raw2 response:', resText.resTxt);
       try {
-        const data = JSON.parse(resText);
-        appendMessage(data.response || "ไม่มี response", 'bot');
+        //const data = JSON.parse(resText);
+        appendMessage(resText.resTxt || "ไม่มี response", 'bot');
       } catch (e) {
-        appendMessage("❌ JSON error: " + resText.response, 'bot');
+        appendMessage("❌ JSON error: " + resText, 'bot');
       }
     }
   </script>
