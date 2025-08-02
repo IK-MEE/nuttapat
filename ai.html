@@ -1,0 +1,211 @@
+<html>
+    <head>
+        <title>ณัฐพัชร์ น.</title>
+        <link rel="stylesheet" href="./css/chatBox.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@100..900&display=swap" rel="stylesheet">
+    </head>
+    <body>
+        <nav>
+            <a href="./index.html"><h1>ณัฐพัชร์ น.</h1></a>
+            <ul class="navigation-items">
+                <li class="navigation-item">
+                    <a href="./ai.html">AI</a>
+                </li>
+                <li class="navigation-item">
+                    <a href="./about-me.html">ช่องทางติดต่อ</a>
+                </li>
+            </ul>
+        </nav>
+
+        <hr>
+
+        <main>
+            <div id="page-container">
+                <div id="chatbox"></div>
+                <div id="input-section">
+                <input id="input" type="text" placeholder="Aa" />
+                <button onclick="send()">▶</button>
+                </div>
+            </div>
+            <footer>
+            </footer>
+        </main>
+
+        <script>
+            const testChat = false;
+            const testTTS = false;
+            const greetingMsg = "สวัสดีค่า";
+            const chatbox = document.getElementById('chatbox');
+            const input = document.getElementById('input');
+
+            const currentNgrok = 'https://44ff7fabfdca.ngrok-free.app'
+
+            const webhookAiUrl = currentNgrok+'/webhook/chat';
+            const webhookTestAiUrl = currentNgrok+'/webhook-test/chat';
+            const webhookTtsUrl = currentNgrok+'/webhook/textToSpeech'
+            const webhookTestTtsUrl = currentNgrok+'/webhook-test/textToSpeech';
+
+            // ตัวอย่างการเรียกใช้งาน:
+            // เมื่อหน้าเว็บโหลดเสร็จ ให้สร้าง UI Chatbox ใน Element ที่มี id="page-container"
+            document.addEventListener('DOMContentLoaded', function() {
+                input.addEventListener('keypress', function(event){
+                    if (event.key === 'Enter' || event.key === 13) {
+                        event.preventDefault();
+                        send();
+                    }
+                })
+            });
+
+            setTimeout(function() {
+                appendMessage(greetingMsg, 'bot')
+            }, 2000)
+
+            // พูดเสียง
+            function speakWithGoogleTranslate(text) {
+                // 1. ตรวจสอบว่ามีข้อความให้พูดหรือไม่
+                if (!text) return;
+
+                // 2. ลบอีโมจิและอักขระพิเศษ
+                const cleanText = text.replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]|\u200D|\uFE0F|[\u2600-\u27BF]|\u23F0|\u23F3/g, '');
+
+                // 3. เข้ารหัสข้อความสำหรับ URL
+                const encodedText = encodeURIComponent(cleanText);
+                const lang = 'th';
+
+                // 4. สร้าง URL ของ Google Translate TTS
+                const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodedText}&tl=${lang}&client=tw-ob`;
+
+                // 5. สร้าง Audio Element ใหม่เพื่อเล่นเสียง
+                const audio = new Audio(url);
+                audio.play()
+                .catch(error => {
+                    console.error('Error playing audio:', error);
+                });
+            }
+
+            // ทำอนิเมชัน
+            function createTypingIndicator() {
+                const messageContainer = document.createElement('div');
+                messageContainer.classList.add('message-container', 'bot-message');
+
+                // เพิ่มไอคอน (ถ้าต้องการให้มีไอคอนคู่กับ Typing Indicator)
+                const messageImage = document.createElement('img');
+                messageImage.classList.add('icon');
+                messageImage.src = "./img/bronya.png";
+                messageImage.alt = "Bot Icon";
+                messageContainer.appendChild(messageImage);
+
+                // เพิ่ม span สำหรับจุด "..."
+                const typingIndicator = document.createElement('div');
+                typingIndicator.classList.add('typing-indicator');
+                
+                for (let i = 0; i < 3; i++){
+                    const dot = document.createElement('span');
+                    dot.classList.add('dot');
+                    typingIndicator.appendChild(dot);
+                }
+                
+                messageContainer.appendChild(typingIndicator);
+
+                return messageContainer;
+            }
+
+            // สร้างรหัสความจำ
+            function getSessionId() {
+                let sessionId = localStorage.getItem('chatSessionId');
+                const lockSessionId = 'session_93qq8mabph9vmtfpkd91kk'
+                if (!sessionId) {
+                    sessionId = 'session_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+                    localStorage.setItem('chatSessionId', sessionId);
+                }
+                return lockSessionId;
+            }
+
+            function appendMessage(text, sender) {
+                const messageContainer = document.createElement('div');
+                messageContainer.classList.add('message-container', sender === 'user' ? 'user-message' : 'bot-message');
+
+                if (sender === 'bot'){
+                    const messageImage = document.createElement('img');
+                    messageImage.classList.add('icon');
+                    messageImage.src = "./img/bronya.png";
+                    messageImage.alt = "Bot Icon";
+                    messageContainer.appendChild(messageImage);
+                }
+
+                const messageText = document.createElement('span');
+                messageText.classList.add(sender === 'user' ? 'user-text' : 'bot-text'); // เพิ่มคลาส user-text หรือ bot-text
+                messageText.innerText = text; //
+
+                messageContainer.appendChild(messageText);
+
+                if (sender === 'bot'){
+                    const messageButton = document.createElement('button');
+                    messageButton.classList.add('bot-button');
+                    messageButton.innerText = '🔊';
+                    messageButton.addEventListener('click', () => {
+                        speakWithGoogleTranslate(text);
+                    });
+
+                    messageContainer.appendChild(messageButton);
+                }
+                
+                
+                chatbox.appendChild(messageContainer);
+                if (sender === 'bot') speakWithGoogleTranslate(text);
+                
+                // เลื่อน scrollbar ลงไปด้านล่างสุดโดยอัตโนมัติ
+                //chatbox.scrollTop = chatbox.scrollHeight;
+
+                return messageContainer; // ส่งคืน element เพื่อให้สามารถลบ "Thinking..." ได้
+            }
+
+            async function send() {
+                const sessionId = getSessionId();
+                const text = input.value.trim();
+                
+                if (!text) return;
+                appendMessage(text, 'user');
+                input.value = ''; //ล้างช่อง input
+
+                //const thinkingMessage = appendMessage('...', 'bot'); // แสดงสถานะ "Thinking..."
+                const thinkingMessage = createTypingIndicator();
+                chatbox.appendChild(thinkingMessage);
+                chatbox.scrollTop = chatbox.scrollHeight;
+
+                try {
+                    const res = await fetch((testChat ? webhookTestAiUrl : webhookAiUrl), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        prompt: text,
+                        sessionId: sessionId })
+                    });
+
+                    const data  = await res.json();
+                    console.log('🧾 Raw response:', data.resTxt);
+
+                    // ลบข้อความ "Thinking..." ออก
+                    chatbox.removeChild(thinkingMessage);
+
+                    const botResponse = data.resTxt || "ไม่มี response";
+
+                    appendMessage(botResponse, 'bot');
+
+                } catch (e) {
+                    console.error('Error:', e)
+                    // ลบข้อความ "Thinking..." ออกและแสดงข้อความ Error
+                    if (thinkingMessage && chatbox.contains(thinkingMessage)) {
+                        chatbox.removeChild(thinkingMessage);
+                    }
+                    const errorMessage = "❌ error: " + e.message;
+                    appendMessage(errorMessage, 'bot');
+                }
+            }
+        </script>
+        
+    </body>
+</html>

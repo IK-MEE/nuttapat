@@ -1,0 +1,294 @@
+html {
+    background-image: url("https://www.datocms-assets.com/54048/1709735845-coco-remastered-march-5-1.jpg?auto=format");
+    background-repeat: no-repeat;
+    background-size: cover;
+    font-family: "Noto Sans Thai", sans-serif;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+}
+
+main {
+    display: flex;
+    justify-content: center;
+}
+
+body {
+    width: 80%;
+    overflow-x: hidden;
+    margin: 0 auto;
+    box-sizing: border-box;
+    background-color: rgba(255, 255, 255, .7);
+    padding: 0 2rem;
+}
+
+footer {
+    position: fixed;
+    width: 75%;
+    bottom: 0;
+    text-align: center;
+}
+
+#page-container {
+    /* ลบ margin-top ออก เพื่อให้ align-items: center ใน body ทำงานเต็มที่ */
+    /* margin-top: 30px; */ 
+
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* จัดลูกๆ ในแนวศูนย์กลางของ page-container */
+
+    width: 90%;         /* ใช้ 90% ของความกว้างหน้าจอ */
+    max-width: 700px;   /* ไม่ให้กว้างเกิน 700px */
+    
+    /* --- ส่วนนี้คือจุดสำคัญสำหรับการปรับความสูง --- */
+    height: 80vh;       /* กำหนดความสูงเป็น 90% ของ Viewport Height (vh) */
+    /*max-height: 900px;  /* ไม่ให้สูงเกิน 900px (เพื่อควบคุมบนจอใหญ่ๆ) */
+    min-height: 450px; /* เพิ่ม min-height เพื่อไม่ให้มันเล็กเกินไปบนจอมือถือเล็กๆ */
+    /* ------------------------------------------- */
+
+    padding: 15px; /**/
+    box-sizing: border-box;
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+#chatbox {
+    border: 1px solid #d4d4d4;
+    border-radius: 15px;
+    /*padding: 10px;/**/
+    margin: 10px;
+    
+    /* --- การกระจายความสูงภายใน page-container --- */
+    flex-grow: 1; /* ทำให้ chatbox ขยายเต็มพื้นที่ความสูงที่เหลือ */
+    height: auto; /* ตั้งค่าเป็น auto หรือลบ height: 90%; ออก เพราะ flex-grow จะจัดการเอง */
+    /* ------------------------------------------ */
+
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    margin-bottom: 15px; /**/
+    background-color: #ffffff;
+}
+
+#input-section {
+    display: flex;
+    /* --- กำหนดความสูงที่แน่นอนให้ input-section --- */
+    height: auto; /* เปลี่ยนจาก 7.5% เป็น auto เพื่อให้มันปรับตามเนื้อหา */
+    /* หรือถ้าอยากให้มีความสูงที่แน่นอน ก็กำหนดเป็น px */
+    /* height: 50px; */ 
+    /* --------------------------------------------- */
+    width: 100%;
+    gap: 10px;
+}
+
+#input {
+    flex-grow: 1; /* ให้ input ขยายเต็มพื้นที่ที่เหลือ */
+    padding: 10px 0px 10px 15px; /* เพิ่ม padding ให้ input ดูดีขึ้น */
+    border: 1px solid #d4d4d4;
+    border-radius: 20px; /* ปรับ radius ให้โค้งมนสวยงาม */
+    outline: none;        /* ลบ outline เริ่มต้นของเบราว์เซอร์ออก */
+    box-shadow: none;     /* ลบ box-shadow เริ่มต้นของเบราว์เซอร์ออก (ที่อาจทำให้ขอบดำ) */
+    font-size: 16px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* เพิ่ม transition ให้ดู smooth */
+}
+
+#input:focus {
+    border-color: #c2dfff; /* เปลี่ยนสี border เมื่อถูกโฟกัส */
+    /* **สำคัญ:** แก้ไข box-shadow ที่ซ้ำซ้อนและผิดพลาด */
+    box-shadow: 0 0 0 3px rgba(92, 171, 255, 0.25); /* เพิ่มเงาสีฟ้าอ่อนๆ แทน */
+}
+
+button {
+    padding: 0px 4px 0px 9px; /* ปรับ padding ให้ปุ่มดูดีขึ้น */
+    border: 1px solid #ffffff; /* คง border ไว้ */
+    border-radius: 20px; /* ปรับ radius ให้โค้งมนสวยงาม */
+    background-color: #ffffff; /* สีปุ่ม */
+    color: rgb(60, 60, 255);
+    cursor: pointer;
+    font-size: 29px;
+    transition: background-color 0.3s ease, border-color 0.3s ease;/**/
+}
+
+button:hover {
+    background-color: #d3d3d3; /* สีปุ่มเมื่อ hover */
+    border-color: #d3d3d3; /* เปลี่ยนสี border ตาม */
+}
+
+/* สไตล์สำหรับข้อความ User/Bot */
+.message-container {
+    display: flex;
+    margin-top: 8px;
+    width: 100%; /* ให้ message-container ใช้ความกว้างเต็มของ chatbox */
+}
+
+.user-message {
+    justify-content: flex-end;
+}
+
+.user-text {
+    background-color: #15e9f8;
+    color: #000000;
+    padding: 8px 12px;
+    border-radius: 15px;
+    margin: 10px;
+    max-width: 70%; /* ข้อความไม่เกิน 70% ของ container */
+    word-wrap: break-word;
+}
+
+.bot-message {
+    justify-content: flex-start;
+    align-items: center;
+    /*align-items: center;/* สำคัญ: จัดเรียงลูกๆ ภายใน bot-message (ไอคอนและข้อความ) ให้ชิดบน */
+    /* ถ้าต้องการให้ไอคอนกับข้อความจัดกึ่งกลางแนวตั้งกัน ให้ใช้ align-items: center; */
+    /* align-items: center; */
+}
+
+.bot-text {
+    background-color: #f3f4f9;
+    color: #000000;
+    padding: 8px 12px;
+    margin: 10px;
+    border-radius: 15px;
+    max-width: 70%; /* ข้อความไม่เกิน 70% ของ container */
+    word-wrap: break-word;
+}
+
+.icon {
+    width: 50px;  /* กำหนดความกว้างของรูป icon */
+    height: 50px; /* กำหนดความสูงของรูป icon */
+    border-radius: 50%; /* ทำให้รูปเป็นวงกลม (ถ้าต้องการ) */
+    margin-left: 8px; /* เว้นระยะห่างด้านขวาจากข้อความ (ถ้าต้องการ) */
+    padding: 0px 10px;
+    object-fit: cover; /* ทำให้รูปถูกครอบคลุมในพื้นที่ที่กำหนดโดยไม่บิดเบี้ยว */
+    image-rendering: crisp-edges;
+    align-self: center;
+    justify-self: center;
+}
+
+.typing-indicator{
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background-color: #f3f4f9;/**/
+    border-radius: 15px;
+    padding: 8px 12px;
+    margin: 10px;
+    height: 24px;
+    max-width: 70%;
+}
+
+.typing-indicator .dot{
+    width: 6px;
+    height: 6px;
+    background-color: #5b5b5b;
+    border-radius: 50%;
+    animation: wave 1.5s infinite ease-in-out;
+}
+
+.typing-indicator .dot:nth-child(1){
+    animation-delay: -0.32s;
+}
+
+.typing-indicator .dot:nth-child(2){
+    animation-delay: -0.16s;
+}
+
+.typing-indicator .dot:nth-child(3){
+    animation-delay: 0s;
+}
+
+/* @keyframes คือหัวใจของแอนิเมชัน */
+/* มันบอกว่าแอนิเมชัน wave จะทำอะไร */
+@keyframes wave {
+    0%, 100% {
+    transform: translateY(0);
+    }
+    50% {
+    transform: translateY(4px);
+    }
+}
+
+.navigation-items {
+  display: flex;
+  list-style-type: none;
+  align-items: center;
+  margin-left: auto;
+}
+
+.navigation-item {
+  margin: 1rem;
+}
+
+#about-me-container {
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-around;
+  align-items: start;
+  gap: 0 2rem;
+}
+
+#about-me-text-container {
+    max-width: 100%;
+    box-sizing: border-box;
+    order: 1;
+}
+
+.portrait {
+  width: 100%;
+  max-width: 60%;
+  height: auto;
+  order: 2;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+@media (max-width: 500px){
+    h1 {
+        font-size: 0.95rem;
+    }
+    
+    .navigation-item {
+        font-size: 0.8rem;
+        margin: 0.3rem;
+    }
+
+    hr {
+        margin: 0 0 0.5rem 0;
+    }
+
+    h2 {
+        font-size: 0.9rem;
+    }
+
+    footer {
+        position: relative;
+        width: 100%;
+        bottom: 0;
+        text-align: center;
+    }
+
+    #about-me-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #about-me-text-container {
+        max-width: 100%;
+        order: 1;
+    }
+
+    .portrait {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        order: 2;
+    }
+}
