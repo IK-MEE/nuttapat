@@ -116,12 +116,12 @@
             // สร้างรหัสความจำ
             function getSessionId() {
                 let sessionId = localStorage.getItem('chatSessionId');
-                //const lockSessionId = 'session_93qq8mabph9vmtfpkd91kk'
+                const lockSessionId = 'session_93qq8mabph9vmtfpkd91kk'
                 if (!sessionId) {
                     sessionId = 'session_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
                     localStorage.setItem('chatSessionId', sessionId);
                 }
-                return lockSessionId;
+                return sessionId;
             }
 
             function appendMessage(text, sender) {
@@ -210,4 +210,5 @@
     </body>
 
 </html>
+
 
